@@ -1,6 +1,6 @@
 pub mod token {
 
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq)]
     pub enum Tokens {
         LParen,
         RParen,
@@ -9,10 +9,12 @@ pub mod token {
         LCurly,
         RCurly,
         QuotationMark,
-        Character(u8),
-        String,
-        FunctionDef,
-        Invalid
+        //     contents
+        String(String),
+        //          name    args         return type
+        FunctionDef(String, Vec<(Types, String)>, Types),
+        Invalid,
+        None // handy to avoid options
     }
 
     impl Tokens {
@@ -25,7 +27,6 @@ pub mod token {
                 '{' => Tokens::LCurly,
                 '}' => Tokens::RCurly,
                 '"' => Tokens::QuotationMark,
-                'a'..='z' | 'A'..='Z' | '0'..='9' => Tokens::Character(c.to_ascii_lowercase() as u8),
                 _ => Tokens::Invalid
             }
         }
@@ -38,11 +39,54 @@ pub mod token {
                 Tokens::LCurly => '{',
                 Tokens::RCurly => '}',
                 Tokens::QuotationMark => '"',
-                Tokens::Character(c) => *c as char,
-                Tokens::String => 's',
-                Tokens::FunctionDef => 'f',
-                Tokens::Invalid => 'i'
+                Tokens::Invalid => 'i',
+                Tokens::FunctionDef(_, _, _) => 'f',
+                _ => ' '
             }
         }
+    }
+
+    #[derive(Debug, PartialEq)]
+    pub enum Types {
+        Int,
+        Float,
+        String,
+        Bool,
+        Void,
+        Invalid
+    }
+
+    impl Types {
+        pub fn parse_type(s: &str) -> Types {
+            match s {
+                "int" => Types::Int,
+                "float" => Types::Float,
+                "string" => Types::String,
+                "bool" => Types::Bool,
+                "void" => Types::Void,
+                _ => Types::Invalid
+            }
+        }
+        pub fn to_string(&self) -> String {
+            match self {
+                Types::Int => "int".to_string(),
+                Types::Float => "float".to_string(),
+                Types::String => "string".to_string(),
+                Types::Bool => "bool".to_string(),
+                Types::Void => "void".to_string(),
+                Types::Invalid => "invalid".to_string()
+            }
+        }
+    }
+
+    #[derive(Debug, PartialEq)]
+    pub enum Exceptions {
+        InvalidToken,
+        InvalidType
+    }
+
+    pub struct Exception {
+        pub error: Exceptions,
+        pub character_pos: i64,
     }
 }

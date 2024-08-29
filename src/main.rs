@@ -2,6 +2,8 @@ mod lexer;
 mod tokens;
 use std::{fs::File, io::{stdin, stdout, Read, Write}};
 
+use tokens::token::{Exception, Exceptions, Tokens};
+
 fn main() {
     /* let mut file =String::new();
     print!("Enter the relative path of the .ll file to run: ");
@@ -16,8 +18,35 @@ fn main() {
 
     let mut lexer: lexer::lexer::Lexer = lexer::lexer::Lexer::init(contents); // lexer lexer lexer!
     while lexer.advance(1) {
-        lexer.skip_whitespace();
-        print!("{}", lexer.get_next_token().to_char());
+        let token = lexer.get_next_token();
+        match token {
+            Tokens::Invalid => throw_error(Exception { error: Exceptions::InvalidToken, character_pos: lexer.index }),
+            Tokens::QuotationMark => {
+                let string = lexer.discern_string().unwrap();
+                print!("{}", string);
+            },
+            Tokens::FunctionDef(x, y, z) => {
+                print!("fnc {}({}) [{:#?}]", x,
+                { 
+                    let mut string = String::new();
+                    for i in y {
+                        let st = format!("@{x}@ {y}", x = i.0.to_string(), y = i.1);
+                        string.push_str(&format!("{:#?}, ", st));
+                    }
+                    string
+                }
+                    , z);
+            },
+            Tokens::None => { continue; },
+
+
+            _ => { println!("{}", token.to_char()); }
+        }
     }
 
+}
+
+fn throw_error(error: Exception) {
+    eprintln!("Exception: {:#?}", error.error);
+    std::process::exit(1);
 }
