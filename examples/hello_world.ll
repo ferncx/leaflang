@@ -1,5 +1,13 @@
-fnc main(@string@ message, @int@ number) [@bool@] {
-    lineout(message);
-    lineout(number);
-    ret number;
+fnc lineout(message) [void] {
+
+}
+
+fnc hello(message, number) [bool] {
+    lineout(message)
+    lineout(number)
+    ret(true)
+}
+
+fnc main() [void] {
+    hello("hi!", 2)
 }
