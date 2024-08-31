@@ -18,18 +18,15 @@ fn main() {
     file.read_to_string(&mut contents);
 
     let mut lexer: lexer::lexer::Lexer = lexer::lexer::Lexer::init(contents); // lexer lexer lexer!
-    let mut tokens: Vec<Tokens> = vec![];
     while lexer.advance(1) {
         let token = lexer.get_next_token();
         match token {
             Tokens::Invalid => throw_error(Exception { error: Exceptions::InvalidToken, message: String::new(), character_pos: lexer.index }),
-            Tokens::None => { continue; },
-            _ => { tokens.push(token.clone()) }
+            _ => { continue; },
         }
-        println!("{:#?}", token)
     }
     let mut file_str = String::new();
-    let mut parser = parser::parser::Parser::init(tokens);
+    let mut parser = parser::parser::Parser::init(lexer.tokens);
     while parser.advance(1) {
         let parsed_token = parser.parse_current_token();
         file_str.push_str(&(parsed_token + "\n"));

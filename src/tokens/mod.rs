@@ -66,8 +66,8 @@ pub mod token {
     impl Types {
         pub fn parse_type(s: &str) -> Types {
             match s {
-                "int" => Types::Int,
-                "float" => Types::Float,
+                "i64" | "i32" | "u8" | "u16" => Types::Int,
+                "f32" | "f64" => Types::Float,
                 "string" => Types::String,
                 "bool" => Types::Bool,
                 "void" => Types::Void,

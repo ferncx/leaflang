@@ -1,6 +1,4 @@
-fnc lineout(message) [void] {
-
-}
+include "./libs/default_lib.rs"
 
 fnc hello(message, number) [bool] {
     lineout(message)

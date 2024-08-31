@@ -1,3 +1,3 @@
-pub fn lineout(message: String) {
+fn lineout(message: String) {
     println!(message);
 }
