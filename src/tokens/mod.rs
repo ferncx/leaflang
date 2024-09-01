@@ -91,6 +91,7 @@ pub mod token {
     #[derive(Debug, PartialEq, Clone)]
     pub struct Variable {
         pub t: Types,
+        pub n: String, // Name
         pub v: String // converted later, can't use Any
     }
 
