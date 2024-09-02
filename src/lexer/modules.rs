@@ -187,17 +187,31 @@ impl Module {
                 self.advance(1);
             }
             /* 
-            i implemented function scopes, so you need to:
             first check if its a literal of some kind (e.x. "hi", 1, true)
-            then check if it's a variable in the space
+            then check if it's a variable in scope
             if its a literal, make a new variable for it (temp, obviously; not stored in scope)
             */
-            let varg = todo!();
-            arguments.push(varg);
+            let var_if_literal = Lexer::discern_type(arg.clone(), arg.clone());
+            if let Variable {t: Types::Placeholder, n: _, v: _} = var_if_literal {
+                // if we're here, that means this argument was not a literal
+                // first thing we need to do is check the function scope for this variable
+                // note this code doesn't currently check for the global scope 
+
+                let Some(var) = self.scopes.clone().into_iter().find(|s| s.0 == called_function.0)
+                else { throw_custom_error(format!("argument {} does not exist in scope", arg)); return Tokens::Invalid;};
+
+                let Some(var) = var.1.into_iter().find(|v| v.n == arg)
+                else { throw_custom_error(format!("argument {} does not exist in scope", arg)); return Tokens::Invalid;};
+
+                arguments.push(var);
+                continue;
+            }
+            // if we're here, that means a literal (i.e. "hello!") was specified.
+            // we can just pass `var_if_literal` to the arguments vector
+            
+            arguments.push(var_if_literal);
         }
-        println!("{:#?}", arguments);
-        println!("{:#?}", called_function.1);
-        if arguments != called_function.1
+        if arguments.clone().into_iter().map(|mut v|{v.n = String::new(); v.v = String::new(); v} ).collect::<Vec<Variable>>() != called_function.1
         {  throw_custom_error(format!("Invalid arguments provided to function {}", called_function.0)); }
 
         return Tokens::FunctionCall(function, arguments);

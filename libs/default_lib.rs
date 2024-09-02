@@ -1,3 +1,3 @@
 fn lineout(message: String) {
-    println!(message);
+    println!("hi!");
 }

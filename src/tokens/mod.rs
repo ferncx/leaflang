@@ -19,6 +19,7 @@ pub mod token {
         Invalid,
         FunctionCall(String, Vec<Variable>),
         Return((Option<Variable>, String)),
+        Semicolon,
         None // handy to avoid options
     }
 
@@ -33,6 +34,7 @@ pub mod token {
                 '{' => Tokens::LCurly,
                 '}' => Tokens::RCurly,
                 '"' => Tokens::QuotationMark,
+                ';' => Tokens::Semicolon,
                 _ => Tokens::Invalid
             }
         }
@@ -47,6 +49,7 @@ pub mod token {
                 Tokens::QuotationMark => '"',
                 Tokens::Invalid => 'i',
                 Tokens::FunctionDef(_, _, _) => 'f',
+                Tokens::Semicolon => ';',
                 _ => ' '
             }
         }
